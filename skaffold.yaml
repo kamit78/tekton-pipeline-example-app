@@ -1,0 +1,31 @@
+apiVersion: skaffold/v2beta28
+kind: Config
+metadata:
+  name: kaniko-demo
+build:
+  tagPolicy:
+    gitCommit: {}
+  artifacts:
+  - image: kumaram/ameren
+    kaniko:
+      dockerfile: Dockerfile
+      image: gcr.io/kaniko-project/executor:latest  
+  cluster:
+    dockerConfig:  
+      #path: ~/.docker/config.json
+      secretName: kaniko-secret
+    pullSecretName: kaniko-secret
+    namespace: default
+deploy:
+  kustomize:
+    paths: ["kustomize"]
+
+# profiles:
+# - deploy:
+#       dockerConfig:  
+#         #path: ~/.docker/config.json
+#         secretName: kaniko-secret
+#       pullSecretName: kaniko-secret
+#       namespace: default
+#   name: dev
+  

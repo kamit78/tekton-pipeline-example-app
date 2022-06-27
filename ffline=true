@@ -1,3 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    deploy: argocd
+    pipeline: tekton
+  name: svc-2048
+  namespace: default
+spec:
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8000
+  selector:
+    app: 2048-app
+    deploy: argocd
+    pipeline: tekton
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,7 +44,9 @@ spec:
       - env:
         - name: PORT
           value: "8000"
-        image: kumaram/ameren:latest
+        image: kumaram/ameren:403ac38-dirty@sha256:f605660995b3bf9a7f9252c653189b9b2036ba50bad70db8029d9d7d160b3e86
+        imagePullSecrets:
+        - name: kaniko-secret
         name: 2048-app
         ports:
         - containerPort: 8000
@@ -36,4 +56,4 @@ spec:
             cpu: "0.1"
             memory: 100Mi
       imagePullSecrets:
-      - name: regcred
+      - name: kaniko
